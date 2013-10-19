@@ -21,11 +21,11 @@ var enemyTypes = {
 };
 
 var Enemy = function() {
-  this.layer = new lime.Layer();
-  this.sprite = new lime.Sprite().setFill(0, 0, 0, 0.4);
   this.type = 'default';
-  this.hitBox = new lime.Sprite().setFill(0, 255, 0, 0.4);
-  this.triggerBox = new lime.Sprite().setFill(255, 0, 0, 0.4);
+  this.spriteGroup = new lime.Layer().setAnchorPoint(0, 0);
+  this.sprite = new lime.Sprite().setFill(0, 0, 0, 0.4).setAnchorPoint(0.5, 0.5);
+  this.hitBox = new lime.Sprite().setFill(0, 255, 0, 0.4).setAnchorPoint(0.5, 0.5);
+  this.triggerBox = new lime.Sprite().setFill(255, 0, 0, 0.4).setAnchorPoint(0.5, 0.5);
 };
 
 //public
@@ -37,10 +37,11 @@ components.Enemy = function(type) {
   }
   var thisEnemyType = enemyTypes[thisEnemy.type];
 
-  thisEnemy.layer.appendChild(thisEnemy.sprite);
-  thisEnemy.layer.appendChild(thisEnemy.hitBox);
-  thisEnemy.layer.appendChild(thisEnemy.triggerBox);
+  thisEnemy.spriteGroup.appendChild(thisEnemy.sprite);
+  thisEnemy.spriteGroup.appendChild(thisEnemy.hitBox);
+  thisEnemy.spriteGroup.appendChild(thisEnemy.triggerBox);
 
+  thisEnemy.spriteGroup.setSize(thisEnemyType.size.width, thisEnemyType.size.height)
   thisEnemy.sprite.setSize(thisEnemyType.size.width, thisEnemyType.size.height);
   thisEnemy.hitBox.setSize(thisEnemyType.hitBox.width, thisEnemyType.hitBox.height);
   thisEnemy.triggerBox.setSize(thisEnemyType.triggerBox.width, thisEnemyType.triggerBox.height);
