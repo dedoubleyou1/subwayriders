@@ -5,9 +5,9 @@ settings = {
   levels: [
     {
       enemies: [
-        {type: 'default', location {x: 100, y: 100}},
-        {type: 'default', location {x: 200, y: 150}},
-        {type: 'default', location {x: 300, y: 50}}
+        {type: 'default', location: {x: 100, y: 100}},
+        {type: 'default', location: {x: 200, y: 150}},
+        {type: 'default', location: {x: 300, y: 0}}
       ]
     }
   ]
