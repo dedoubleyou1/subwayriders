@@ -12,6 +12,19 @@ goog.require('lime.Scene');
 goog.require('lime.Sprite');
 goog.require('settings');
 
+//private
+
+function convertBoxToParent(element) {
+  var boundingBox = element.getBoundingBox();
+  var parentCoord = element.getParent().getPosition();
+  boundingBox.top = boundingBox.top + parentCoord.y;
+  boundingBox.bottom = boundingBox.bottom + parentCoord.y;
+  boundingBox.left = boundingBox.left + parentCoord.x;
+  boundingBox.right = boundingBox.right + parentCoord.x;
+  return boundingBox;
+}
+
+
 // public
 levels.Level = function(levelNumber) {
   var that = this;
@@ -39,22 +52,36 @@ levels.Level = function(levelNumber) {
   });
 
   // when called starts round
+  this.characterMoveAnimation = {
+  }
   this.start = function() {
-    console.log('test');
     goog.events.listen(this.subwayCarFloor, ['mousedown', 'touchstart'], function(e) {
-      console.log('hit');
+      that.characterMoveAnimation.character = new lime.animation
+        .MoveTo(e.position.x, e.position.y)
+        .setSpeed(1)
+        .setEasing(lime.animation.Easing.LINEAR)
+      that.characterMoveAnimation.subwayCar = new lime.animation
+        .MoveBy(that.character.spriteGroup.getPosition().x - e.position.x, 0)
+        .setSpeed(1)
+        .setEasing(lime.animation.Easing.LINEAR)
       that.character.spriteGroup.runAction(
-        new lime.animation
-          .MoveTo(e.position.x, e.position.y)
-          .setSpeed(1)
-          .setEasing(lime.animation.Easing.LINEAR)
+        that.characterMoveAnimation.character
       );
       that.subwayCar.runAction(
-        new lime.animation
-          .MoveBy(that.character.spriteGroup.getPosition().x - e.position.x, 0)
-          .setSpeed(1)
-          .setEasing(lime.animation.Easing.LINEAR)
+        that.characterMoveAnimation.subwayCar
       );
+    });
+
+    lime.scheduleManager.schedule(function(dt) {
+      that.enemies.forEach(function(element, index, array) {
+        if (goog.math.Box.intersects(
+          convertBoxToParent(element.hitBox), 
+          convertBoxToParent(that.character.hitBox)
+        )){
+          that.characterMoveAnimation.character.stop();
+          that.characterMoveAnimation.subwayCar.stop();
+        }
+      });
     });
   };
 };
